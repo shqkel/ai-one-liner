@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🔑 AI One-Liner</h1>
+
+    <div id="no-key">
+      <p class="guide">OpenAI API Key를 입력해주세요.</p>
+      <p class="sub-guide">
+        텍스트를 선택하면 AI가 한 줄로 설명해줍니다.<br>
+        <a href="https://platform.openai.com/api-keys" target="_blank">API Key 발급받기 →</a>
+      </p>
+      <input type="password" id="api-key-input" placeholder="sk-..." />
+      <button id="save-btn">저장</button>
+    </div>
+
+    <div id="has-key" style="display:none">
+      <p class="status">✅ API Key 설정됨</p>
+      <p class="masked-key" id="masked-key"></p>
+      <button id="delete-btn">삭제</button>
+    </div>
+
+    <div class="option">
+      <span class="option-label">트리거</span>
+      <div class="toggle-group">
+        <button class="toggle-btn active" data-mode="auto">자동</button>
+        <button class="toggle-btn" data-mode="manual" title="텍스트 선택 후 아이콘 클릭 또는 A키">클릭</button>
+      </div>
+    </div>
+
+    <div class="tip">
+      <span class="tip-icon">?</span>
+      <span class="tip-bubble">PDF에서는 텍스트 선택 후 우클릭 → <strong>AI One-Liner</strong> 메뉴를 이용하세요.</span>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

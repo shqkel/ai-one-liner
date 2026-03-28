@@ -1,0 +1,6 @@
+/* Shadow DOM 내부 스타일은 content.js에서 주입 */
+/* 이 파일은 호스트 페이지에 최소한의 영향만 줌 */
+#ai-one-liner-host {
+  position: absolute;
+  z-index: 2147483647;
+}
