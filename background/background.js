@@ -31,7 +31,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 
   if (message.action === "openPopup") {
-    chrome.action.openPopup();
+    // chrome.action.openPopup()은 user gesture 없이 호출 시 실패하므로
+    // 팝업 페이지를 새 탭으로 열어 대체
+    chrome.tabs.create({ url: chrome.runtime.getURL("popup/popup.html") });
     return false;
   }
 
