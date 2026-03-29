@@ -10,7 +10,7 @@ async function main() {
   const browser = await chromium.launch();
   const context = await browser.newContext({
     viewport: { width: 1280, height: 800 },
-    deviceScaleFactor: 2,
+    deviceScaleFactor: 1,
   });
 
   // --- 1. 메인 기능 스크린샷: 텍스트 선택 + 툴팁 ---
@@ -33,6 +33,22 @@ async function main() {
   await settingsPage.waitForTimeout(300);
   await settingsPage.screenshot({ path: path.join(STORE, "screenshot-3-settings.png") });
   console.log("✓ screenshot-3-settings.png");
+
+  // --- 4. Small promo tile (440x280) ---
+  const smallCtx = await browser.newContext({ viewport: { width: 440, height: 280 }, deviceScaleFactor: 1 });
+  const smallPage = await smallCtx.newPage();
+  await smallPage.setContent(getSmallPromoHTML(), { waitUntil: "networkidle" });
+  await smallPage.waitForTimeout(300);
+  await smallPage.screenshot({ path: path.join(STORE, "promo-small-440x280.png") });
+  console.log("✓ promo-small-440x280.png");
+
+  // --- 5. Marquee promo tile (1400x560) ---
+  const marqueeCtx = await browser.newContext({ viewport: { width: 1400, height: 560 }, deviceScaleFactor: 1 });
+  const marqueePage = await marqueeCtx.newPage();
+  await marqueePage.setContent(getMarqueePromoHTML(), { waitUntil: "networkidle" });
+  await marqueePage.waitForTimeout(300);
+  await marqueePage.screenshot({ path: path.join(STORE, "promo-marquee-1400x560.png") });
+  console.log("✓ promo-marquee-1400x560.png");
 
   await browser.close();
   console.log("\n모든 스크린샷 촬영 완료 → store/");
@@ -440,6 +456,238 @@ function getSettingsHTML() {
 
       <div class="tip">
         <strong>💡 Tip:</strong> PDF 뷰어에서는 텍스트를 선택한 뒤 우클릭 → "AI One-Liner" 메뉴를 이용하세요.
+      </div>
+    </div>
+  </div>
+</body>
+</html>`;
+}
+
+function getSmallPromoHTML() {
+  return `<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 440px; height: 280px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    color: #fff;
+  }
+  .container {
+    text-align: center;
+    padding: 0 32px;
+  }
+  .logo {
+    width: 56px; height: 56px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin-bottom: 16px;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  h1 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+  }
+  p {
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.5;
+  }
+  .highlight {
+    color: #60a5fa;
+    font-weight: 600;
+  }
+  .pill {
+    display: inline-block;
+    margin-top: 14px;
+    padding: 5px 14px;
+    background: rgba(96,165,250,0.15);
+    border: 1px solid rgba(96,165,250,0.3);
+    border-radius: 20px;
+    font-size: 11px;
+    color: #93c5fd;
+    font-weight: 500;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">AI</div>
+    <h1>AI One-Liner</h1>
+    <p><span class="highlight">드래그 한 번</span>이면, AI가 한 줄로 설명해줍니다</p>
+    <span class="pill">Powered by OpenAI</span>
+  </div>
+</body>
+</html>`;
+}
+
+function getMarqueePromoHTML() {
+  return `<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1400px; height: 560px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 50%, #1a1a2e 100%);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    color: #fff;
+  }
+  .left {
+    flex: 1;
+    padding: 0 80px;
+  }
+  .logo {
+    width: 64px; height: 64px;
+    background: rgba(255,255,255,0.10);
+    border-radius: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.12);
+  }
+  h1 {
+    font-size: 42px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    letter-spacing: -1px;
+    line-height: 1.1;
+  }
+  .subtitle {
+    font-size: 18px;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 28px;
+    line-height: 1.5;
+  }
+  .highlight { color: #60a5fa; }
+  .features {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .feature {
+    padding: 6px 16px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.75);
+  }
+  .right {
+    width: 560px;
+    height: 560px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .mockup {
+    background: #fff;
+    width: 420px;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    padding: 28px 32px;
+    color: #333;
+    position: relative;
+  }
+  .mockup-url {
+    background: #f1f3f4;
+    border-radius: 16px;
+    padding: 7px 14px;
+    margin-bottom: 18px;
+    font-size: 11px;
+    color: #5f6368;
+  }
+  .mockup h2 { font-size: 15px; margin-bottom: 8px; color: #1a1a1a; }
+  .mockup p { font-size: 12px; line-height: 1.7; color: #555; }
+  .mockup mark { background: #fef08a; color: inherit; border-radius: 2px; padding: 0 2px; }
+  .tooltip-mock {
+    position: absolute;
+    bottom: -20px;
+    right: -30px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    padding: 12px 14px;
+    width: 280px;
+    color: #333;
+  }
+  .tooltip-mock .t-text { font-size: 12px; line-height: 1.5; color: #1a1a1a; margin-bottom: 8px; }
+  .tooltip-mock .t-actions { display: flex; gap: 6px; align-items: center; }
+  .tooltip-mock .t-btn {
+    padding: 4px 10px;
+    border-radius: 14px;
+    font-size: 10px;
+    font-weight: 600;
+    border: none;
+  }
+  .tooltip-mock .t-more { background: #f0f7ff; color: #2563eb; }
+  .tooltip-mock .t-ai { background: #1a1a1a; color: #fff; font-size: 10px; padding: 4px 8px; }
+  .glow {
+    position: absolute;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(96,165,250,0.15) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+  <div class="left">
+    <div class="logo">AI</div>
+    <h1>AI One-Liner</h1>
+    <p class="subtitle">
+      <span class="highlight">드래그 한 번</span>이면, AI가 한 줄로 설명해줍니다.<br>
+      탭 전환 없이, 지금 보는 페이지에서 바로.
+    </p>
+    <div class="features">
+      <span class="feature">한 줄 요약</span>
+      <span class="feature">상세 설명</span>
+      <span class="feature">출처 링크</span>
+      <span class="feature">AI 바로가기</span>
+      <span class="feature">PDF 지원</span>
+    </div>
+  </div>
+  <div class="right">
+    <div class="glow"></div>
+    <div class="mockup">
+      <div class="mockup-url">developer.mozilla.org/ko/docs/Web/API</div>
+      <h2>Service Worker API</h2>
+      <p>
+        Service Worker는 웹 애플리케이션과 네트워크 사이의
+        프록시 서버 역할을 합니다. <mark>Service Worker</mark>는
+        이벤트 기반 워커로, JavaScript 파일의 형태를 갖고 있습니다.
+      </p>
+      <div class="tooltip-mock">
+        <div class="t-text">웹 브라우저가 백그라운드에서 실행하는 스크립트로, 네트워크 요청 가로채기·캐싱 등을 처리하는 프록시 역할의 워커이다.</div>
+        <div class="t-actions">
+          <button class="t-btn t-more">More</button>
+          <button class="t-btn t-ai">AI</button>
+        </div>
       </div>
     </div>
   </div>
