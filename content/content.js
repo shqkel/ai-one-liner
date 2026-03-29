@@ -22,6 +22,7 @@
   let highlightMarks = [];
   let mousedownInside = false;
   let keySelectionTimer = null;
+  let lastSelectedText = null; // 복사용 텍스트 보존
 
   const extensionIconUrl = chrome.runtime.getURL("icons/icon48.png");
 
@@ -447,6 +448,7 @@
       historyIndex = -1;
     }
     clearPageHighlight();
+    lastSelectedText = null;
   }
 
   function createTooltipHost(positionStyle) {
@@ -770,8 +772,8 @@
       pendingSearch.range = range.cloneRange();
     } else {
       removeTooltip();
+      lastSelectedText = text;
       setPageHighlight(range.cloneRange());
-      window.getSelection().removeAllRanges();
       triggerSearch(text, pos.x, pos.y, false);
     }
   }
@@ -855,6 +857,15 @@
         showError(message.result?.error || "알 수 없는 오류가 발생했습니다.");
       }
     }
+  });
+
+  // Ctrl+C 복사 지원: 하이라이트로 선택이 해제된 경우 저장된 텍스트로 복사
+  document.addEventListener("copy", (e) => {
+    if (!lastSelectedText || !tooltipHost) return;
+    const sel = window.getSelection();
+    if (sel && sel.toString().trim().length > 0) return; // 직접 선택한 텍스트가 있으면 기본 동작
+    e.preventDefault();
+    e.clipboardData.setData("text/plain", lastSelectedText);
   });
 
   // ESC -> 툴팁/아이콘 닫기, A -> 트리거 실행
