@@ -27,42 +27,52 @@
 
 ※ OpenAI API Key가 필요합니다 (https://platform.openai.com/api-keys)
 
-## all_urls 권한 Justification
+---
 
-> 본 확장의 핵심 기능은 사용자가 **어떤 웹페이지에서든** 텍스트를 선택하면 AI 설명을 제공하는 것입니다.
-> 텍스트 선택 이벤트를 감지하려면 content script가 모든 페이지에 주입되어야 합니다.
-> 특정 도메인으로 제한할 경우, 확장의 기본 기능이 작동하지 않습니다.
->
-> Content script는 다음만 수행합니다:
-> - 텍스트 선택 이벤트 감지 (`mouseup`, `keyup`)
-> - 선택된 텍스트를 background service worker로 전달
-> - 툴팁 UI 표시 (Shadow DOM으로 격리)
->
-> 페이지 콘텐츠를 수집하거나 외부로 전송하지 않습니다.
-> 사용자의 명시적 텍스트 선택 동작에 의해서만 API 호출이 발생합니다.
+## Privacy practices 탭 입력 항목
 
-## 스크린샷 가이드
+### Single purpose description
 
-스토어 등록에 **최소 1장**의 스크린샷이 필요합니다.
-
-### 필수 스크린샷 (1280x800 또는 640x400)
-1. **메인 기능**: 웹페이지에서 텍스트를 선택하고 툴팁이 표시된 화면
-2. **상세 설명**: "More" 버튼 클릭 후 상세 설명이 펼쳐진 화면
-3. **설정 화면**: 팝업에서 API Key 입력 및 트리거 모드 설정 화면
-
-### 프로모션 타일 (440x280, 권장)
-- 확장 아이콘 + 간단한 사용 모습을 담은 이미지
-
-### 촬영 방법
-1. Chrome에서 확장을 로드 (`chrome://extensions` → 개발자 모드 → 압축 해제된 확장 로드)
-2. 아무 웹페이지에서 텍스트 선택 → 툴팁 캡처
-3. Windows: `Win+Shift+S` / Mac: `Cmd+Shift+4`로 영역 캡처
-4. 촬영한 이미지를 `store/` 디렉토리에 저장
-
-### 파일 이름 규칙
 ```
-store/screenshot-1-main.png
-store/screenshot-2-detail.png
-store/screenshot-3-settings.png
-store/promo-440x280.png
+사용자가 웹 페이지에서 선택한 텍스트에 대해 AI 기반의 한 줄 설명을 즉시 제공합니다.
 ```
+
+### Permission justifications
+
+#### activeTab
+
+```
+사용자가 텍스트를 선택할 때 현재 활성 탭의 선택된 텍스트를 읽어 AI 설명을 생성합니다. 확장은 사용자의 명시적 동작(텍스트 드래그 또는 우클릭 메뉴 선택) 시에만 현재 탭에 접근하며, 백그라운드에서 탭 콘텐츠에 접근하지 않습니다.
+```
+
+#### contextMenus
+
+```
+PDF 뷰어 등 content script가 텍스트 선택 이벤트를 감지할 수 없는 환경에서, 사용자가 우클릭 메뉴를 통해 선택한 텍스트의 AI 설명을 요청할 수 있도록 컨텍스트 메뉴 항목을 추가합니다.
+```
+
+#### storage
+
+```
+사용자가 입력한 OpenAI API Key와 트리거 모드 설정(자동/수동)을 브라우저에 저장합니다. chrome.storage.sync를 사용하여 사용자 기기 간 설정을 동기화합니다. 사용자의 개인정보나 브라우징 데이터는 저장하지 않습니다.
+```
+
+#### Host permission (content script <all_urls>)
+
+```
+본 확장의 핵심 기능은 사용자가 어떤 웹페이지에서든 텍스트를 선택하면 AI 설명을 제공하는 것입니다. 텍스트 선택 이벤트(mouseup, keyup)를 감지하기 위해 content script가 모든 페이지에 주입되어야 합니다. content script는 텍스트 선택 감지와 툴팁 UI 표시만 수행하며, 페이지 콘텐츠를 수집하거나 외부로 전송하지 않습니다. 사용자의 명시적 텍스트 선택 동작에 의해서만 API 호출이 발생합니다.
+```
+
+#### Remote code
+
+```
+본 확장은 원격 코드를 실행하지 않습니다. 모든 JavaScript는 확장 패키지 내에 포함되어 있습니다. 외부 서버와의 통신은 사용자가 텍스트를 선택했을 때 OpenAI API(api.openai.com)에 선택된 텍스트를 전송하여 설명을 받아오는 것뿐이며, 응답은 텍스트 데이터로만 처리됩니다. 외부에서 코드를 다운로드하거나 eval()을 사용하지 않습니다.
+```
+
+### Data usage certification 체크리스트
+
+아래 항목을 확인 후 체크:
+
+- [x] I do not sell user data to third parties
+- [x] I do not use or transfer user data for purposes unrelated to the item's single purpose
+- [x] I do not use or transfer user data to determine creditworthiness or for lending purposes
