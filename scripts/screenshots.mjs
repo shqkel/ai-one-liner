@@ -529,7 +529,7 @@ function getSmallPromoHTML() {
     <div class="logo">AI</div>
     <h1>AI One-Liner</h1>
     <p><span class="highlight">드래그 한 번</span>이면, AI가 한 줄로 설명해줍니다</p>
-    <span class="pill">Powered by OpenAI</span>
+    <span class="pill">Chrome Extension</span>
   </div>
 </body>
 </html>`;
