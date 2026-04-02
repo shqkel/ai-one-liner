@@ -23,6 +23,8 @@
   let mousedownInside = false;
   let keySelectionTimer = null;
   let lastSelectedText = null; // 복사용 텍스트 보존
+  let autoTriggerTimer = null; // 자동 트리거 딜레이 (Ctrl+C 복사 허용)
+  let recentKeydown = false; // mouseup 전에 키 입력이 있었는지
 
   const extensionIconUrl = chrome.runtime.getURL("icons/icon48.png");
 
@@ -771,11 +773,30 @@
       showTriggerIcon(text, pos.right, pos.top);
       pendingSearch.range = range.cloneRange();
     } else {
-      removeTooltip();
-      lastSelectedText = text;
-      setPageHighlight(range.cloneRange());
-      triggerSearch(text, pos.x, pos.y, false);
+      // 드래그 중 키 입력(Ctrl+C 등)이 있었으면 트리거 생략
+      if (recentKeydown) {
+        recentKeydown = false;
+        return;
+      }
+      // 딜레이를 두어 mouseup 후 Ctrl+C 시 트리거되지 않도록 함
+      clearTimeout(autoTriggerTimer);
+      const cloned = range.cloneRange();
+      autoTriggerTimer = setTimeout(() => {
+        autoTriggerTimer = null;
+        removeTooltip();
+        lastSelectedText = text;
+        setPageHighlight(cloned);
+        triggerSearch(text, pos.x, pos.y, false);
+      }, 400);
     }
+  }
+
+  function isEditableElement(el) {
+    if (!el) return false;
+    const tag = el.tagName;
+    if (tag === "INPUT" || tag === "TEXTAREA") return true;
+    if (el.isContentEditable) return true;
+    return false;
   }
 
   // --- 이벤트 핸들링 ---
@@ -789,6 +810,7 @@
   }
 
   document.addEventListener("mousedown", (e) => {
+    recentKeydown = false;
     mousedownInside = isInsideTooltip(e);
     if (isInsideTriggerIcon(e)) return;
     if (!mousedownInside) {
@@ -819,6 +841,7 @@
 
     // 페이지에서 드래그
     if (!text || text.length < 2) return;
+    if (isEditableElement(e.target)) return;
     handleTextSelection(text, sel.getRangeAt(0));
   });
 
@@ -833,6 +856,7 @@
       const sel = window.getSelection();
       const text = sel?.toString().trim();
       if (!text || text.length < 2) return;
+      if (isEditableElement(document.activeElement)) return;
       handleTextSelection(text, sel.getRangeAt(0));
     }, 300);
   });
@@ -868,8 +892,14 @@
     e.clipboardData.setData("text/plain", lastSelectedText);
   });
 
-  // ESC -> 툴팁/아이콘 닫기, A -> 트리거 실행
+  // 키 입력 시 자동 트리거 취소, ESC -> 툴팁/아이콘 닫기, A -> 트리거 실행
   document.addEventListener("keydown", (e) => {
+    // 드래그 중 키 입력 → mouseup 시 트리거 생략용 플래그
+    if (triggerMode === "auto") recentKeydown = true;
+    if (autoTriggerTimer) {
+      clearTimeout(autoTriggerTimer);
+      autoTriggerTimer = null;
+    }
     if (e.key === "Escape") {
       removeTooltip();
       removeTriggerIcon();
