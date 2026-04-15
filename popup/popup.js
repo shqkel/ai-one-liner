@@ -47,12 +47,23 @@ deleteBtn.addEventListener("click", () => {
 
 // 트리거 모드 토글
 const toggleBtns = document.querySelectorAll(".toggle-btn");
+const autoTip = document.getElementById("auto-tip");
+const modKey = document.getElementById("mod-key");
+
+// OS 감지: Mac이면 Cmd, 그 외 Ctrl 표시
+const isMac = /Mac|iPhone|iPad|iPod/.test(navigator.platform);
+modKey.textContent = isMac ? "⌘ Cmd" : "Ctrl";
+
+function updateAutoTip(mode) {
+  autoTip.style.display = mode === "auto" ? "block" : "none";
+}
 
 chrome.storage.sync.get("trigger_mode", (data) => {
   const mode = data.trigger_mode || "auto";
   toggleBtns.forEach((btn) => {
     btn.classList.toggle("active", btn.dataset.mode === mode);
   });
+  updateAutoTip(mode);
 });
 
 toggleBtns.forEach((btn) => {
@@ -60,5 +71,6 @@ toggleBtns.forEach((btn) => {
     toggleBtns.forEach((b) => b.classList.remove("active"));
     btn.classList.add("active");
     chrome.storage.sync.set({ trigger_mode: btn.dataset.mode });
+    updateAutoTip(btn.dataset.mode);
   });
 });

@@ -160,6 +160,24 @@ button {
   color: #2563eb;
 }
 
+.auto-tip {
+  margin-top: 10px;
+  font-size: 11px;
+  color: #888;
+  line-height: 1.5;
+}
+
+.auto-tip kbd {
+  display: inline-block;
+  padding: 1px 5px;
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 10px;
+  color: #555;
+}
+
 .tip {
   position: relative;
   display: inline-flex;

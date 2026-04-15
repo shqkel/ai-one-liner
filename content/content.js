@@ -30,6 +30,14 @@
 
   // --- 유틸리티 ---
 
+  function isContextValid() {
+    try {
+      return !!chrome.runtime?.id;
+    } catch (_) {
+      return false;
+    }
+  }
+
   function escapeHtml(str) {
     const div = document.createElement("div");
     div.textContent = str;
@@ -648,6 +656,7 @@
       moreBtn.addEventListener("click", () => {
         moreBtn.innerHTML = '<span class="dot-loading"></span>';
         moreBtn.classList.add("loading-btn");
+        if (!isContextValid()) return;
         chrome.runtime.sendMessage({ action: "getDetailed", text: entry.query }, (response) => {
           if (response?.success) {
             entry.detailed = response.result;
@@ -678,6 +687,7 @@
 
     aiGroup.querySelectorAll("[data-service]").forEach((btn) => {
       btn.addEventListener("click", () => {
+        if (!isContextValid()) return;
         chrome.runtime.sendMessage({ action: "openAI", service: btn.dataset.service, text: entry.query });
       });
     });
@@ -719,6 +729,7 @@
       </div>
     `;
     tooltipEl.querySelector(".no-key-btn").addEventListener("click", () => {
+      if (!isContextValid()) return;
       chrome.runtime.sendMessage({ action: "openPopup" });
     });
   }
@@ -726,6 +737,7 @@
   // --- 검색 실행 ---
 
   function triggerSearch(text, x, y, fromInside) {
+    if (!isContextValid()) return;
     ensureTooltip(x, y);
     chrome.storage.sync.get("openai_api_key", (data) => {
       if (!data.openai_api_key) {
@@ -767,6 +779,7 @@
   // --- 텍스트 선택 공통 처리 ---
 
   function handleTextSelection(text, range) {
+    if (!isContextValid()) return;
     const pos = getSelectionPosition(range);
 
     if (triggerMode === "manual") {
