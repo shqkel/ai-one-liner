@@ -4,7 +4,7 @@
 
 **드래그 한 번이면, AI가 한 줄로 설명해줍니다.**
 
-[![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-coming_soon-4285F4?style=flat-square&logo=googlechrome&logoColor=white)](#)
+[![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-설치하기-4285F4?style=flat-square&logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/ai-one-liner/anahkhnbkeledcffgiancenokfkdkpmf)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-34A853?style=flat-square&logo=googlechrome&logoColor=white)](#)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](#license)
 [![OpenAI](https://img.shields.io/badge/Powered_by-OpenAI-412991?style=flat-square&logo=openai&logoColor=white)](#)
@@ -59,15 +59,7 @@
 
 ### 1. 설치
 
-```bash
-# 저장소 클론
-git clone https://github.com/shqkel/ai-one-liner.git
-```
-
-1. Chrome에서 `chrome://extensions` 접속
-2. **개발자 모드** 활성화 (우측 상단 토글)
-3. **압축 해제된 확장 프로그램을 로드합니다** 클릭
-4. 클론한 폴더 선택
+[Chrome 웹 스토어](https://chromewebstore.google.com/detail/ai-one-liner/anahkhnbkeledcffgiancenokfkdkpmf)에서 **AI One-Liner**를 설치하세요.
 
 ### 2. API Key 설정
 
